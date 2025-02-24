@@ -27,6 +27,9 @@ Se um servidor falhar, o sistema escolhe o próximo melhor servidor para garanti
 [`streaming.py`](./src/services/streaming.py)<br>
 O código é responsável por gerenciar a lógica principal da transmissão de conteúdo. Ele integra o server_selector.py para garantir a continuidade do streaming, redirecionando requisições para o melhor servidor disponível em caso de falhas.
 
+[`api.py`](./src/services/api.py)<br>
+O arquivo expõe a lógica da seleção de servidores através de uma API REST, permitindo que outros sistemas ou clientes consultem e escolham o melhor servidor disponível para streaming.
+
 ---
 
 ### 2) Requisito Não Funcional (RNF)  
@@ -43,9 +46,24 @@ O requisito escolhido define que, em caso de falha em um servidor de streaming, 
 
 Os testes automatizados verificam se:  
 - O sistema detecta falhas e seleciona um novo servidor dentro do tempo especificado.  
+
 - A escolha do servidor prioriza a menor latência disponível.  
+
 - O failover ocorre de forma contínua, mesmo em cenários de falhas múltiplas.  
+
+Além disso, o arquivo [`test_api.py`](./tests/test_api.py) complementa a validação do RNF ao testar a resposta da API que gerencia a seleção de servidores.<br>
+
+Os testes incluem:
+- Verificação da disponibilidade da API para garantir que ela pode responder a solicitações sem falhas.
+
+- Medição do tempo de resposta da API, assegurando que a troca de servidores ocorra dentro do limite de 100 ms.
+
+- Teste de resiliência, simulando falhas e verificando se a API consegue redirecionar as requisições corretamente.
 
 **Execução dos testes:**  
 ```bash
-pytest test_server_selector.py
+pytest test_server_selector.py 
+```
+
+```bash
+pytest test_api.py
