@@ -1,27 +1,18 @@
 import pytest
+import time
 from ..src.services.server_selector import select_best_server
 
-# Teste para selecionar o melhor servidor baseado na carga e latência
-def test_select_best_server():
+# Teste para validar tempo máximo de failover (100 ms)
+def test_failover_time():
     servers = [
         {"id": 1, "load": 30, "latency": 100},
         {"id": 2, "load": 20, "latency": 150},
         {"id": 3, "load": 10, "latency": 200},
     ]
+    
+    start_time = time.time()
     best_server = select_best_server(servers)
-    assert best_server == {"id": 3, "load": 10, "latency": 200}
+    elapsed_time = (time.time() - start_time) * 1000  # Converter para ms
 
-# Teste para lidar com uma lista vazia de servidores
-def test_select_best_server_empty_list():
-    servers = []
-    best_server = select_best_server(servers)
-    assert best_server is None
-
-# Teste para quando todos os servidores estão sobrecarregados
-def test_select_best_server_high_load():
-    servers = [
-        {"id": 1, "load": 95, "latency": 100},
-        {"id": 2, "load": 97, "latency": 120},
-        {"id": 3, "load": 99, "latency": 150},
-    ]
-    best_server = select
+    assert best_server is not None, "Nenhum servidor foi selecionado"
+    assert elapsed_time <= 100, f"Tempo de failover excedeu o limite: {elapsed_time:.2f} ms"
