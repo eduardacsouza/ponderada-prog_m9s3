@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from src.services.streaming import start_streaming
+from src.services.streaming_service.streaming import start_streaming
 
 app = FastAPI()
 
